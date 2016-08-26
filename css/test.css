@@ -1,0 +1,23 @@
+.btn,.toExcel {
+	position:relative;
+	float:left;
+	width:200px;
+	height:30px;
+	line-height:30px;
+	border:1px solid grey;
+	text-align:center;
+	margin:10px;
+	cursor:pointer;
+	background-color:grey;
+}
+.selectPanel {
+	display:none;
+	position:absolute;
+	width:200px;
+	margin:50px 0 0 10px;
+	border:1px solid grey;
+	z-index:1;
+	background:#333;
+	color:white;
+	padding:5px;
+}
