@@ -77,9 +77,50 @@
         var r = window.location.search.substr(1).match(reg);
 		if(r){return unescape(r[2]);}
 	}
+	
+	//AJAX上传
+	$zh.update = function(url,data,onprogress,callback){
+		var fd = new FormData();
+		fd.append('update',data);
+		var configure = {
+			url:url,
+			type:'POST',
+			data:fd,
+			processData:false,
+			contentType:false,
+			xhr:function(){
+				var xhr = jQuery.ajaxSettings.xhr();  
+				xhr.upload.onload = function (){  
+					console.log('finish downloading');
+				}  
+				xhr.upload.onprogress = function (ev) {  
+					if(ev.lengthComputable) {  
+						var percent = 100 * ev.loaded/ev.total;  
+						console.log(percent,ev);  
+						if(onprogress){
+							onprogress(percent,ev);
+						}
+					}  
+				}  
+				return xhr;		
+			},
+			success:function(msg){
+				if(callback){
+					callback(msg);
+				}
+			},
+			error:function(msg){
+				if(callback){
+					callback(msg);
+				}
+			}
+		};
+		$.ajax(configure);
+
+	}
 
 	//AJAX请求
-	$zh.request = function(url,data,callback,type,sync){
+	$zh.request = function(url,data,callback,type,sync,xhr){
 		var configure = {};
 		if(!type || type == 'get' || type == 'GET'){
 			if(data){
@@ -92,7 +133,7 @@
 		}else{
 			configure.url = url;
 		}
-		configure.type = type;
+		configure.type = type?type:'get';
 		if(sync){
 			configure.async = false;
 		}
@@ -161,6 +202,8 @@
 					for(var j in attrs[i]){dom.style[j]=attrs[i][j];};break;
 				case "click":
 					dom.addEventListener('click',attrs[i],false);break;
+				case "name":
+					dom.name = attrs[i];break;
 				case "dblclick":
 					//dom.addEventListener('dblclick',attrs[i],false);break;
 				case "blur":
@@ -599,9 +642,12 @@
 	}  
 
 	/*****相对屏幕绝对居中****/
-	$zh.absCenter = function(obj){
+	$zh.absCenter = function(obj,time){
 		var doCenter = function(dom){
-			$(dom).css({'position':'fixed','top':'50%','left':'50%','marginTop':'-'+dom.clientHeight/2+'px','marginLeft':'-'+dom.clientWidth/2+'px','display':'block'});
+			$(dom).css('opacity',0);
+			$(dom).css('display','block');
+			$(dom).css({'position':'fixed','top':'50%','left':'50%','marginTop':'-'+dom.clientHeight/2+'px','marginLeft':'-'+dom.clientWidth/2+'px'});
+			$(dom).animate({opacity:1},time);
 		}
 		if(!obj){return;}
 		if(obj instanceof jQuery){
