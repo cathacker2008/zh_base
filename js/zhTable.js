@@ -557,7 +557,7 @@
 					 this.param.order = this.currentOrderDom.order;
 					 param = this.param;
 				}else{
-					param = '?rows='+this.size+'&page='+this.page+'&order='+JSON.stringify(this.currentOrderDom.order);	
+					param = '?rows='+this.size+'&page='+this.page+'&order='+(this.currentOrderDom?JSON.stringify(this.currentOrderDom.order):'');	
 				}
 				$zh.request(this.config.url,param,function(data){
 					if(!self.config.pageTurnDisable){
